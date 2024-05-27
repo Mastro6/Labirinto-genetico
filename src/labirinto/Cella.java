@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class Cella extends JPanel {
 
-    private static final int BORDER_THICKNESS = 2;
+    private static final int BORDER_THICKNESS = 1;
 
     ArrayList<Direzioni> lati = new ArrayList<>();
 
