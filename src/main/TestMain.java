@@ -1,3 +1,5 @@
+package main;
+
 import labirinto.Cella;
 import labirinto.Direzioni;
 
