@@ -47,8 +47,9 @@ public class Labirinto extends JPanel {
         }
 
         // TEST generazione backtracking
-        backtracking(3,3);
+        backtracking(3,3, null);
         System.out.println(mappaCelleVisitate());
+        System.out.println(mappaVicini());
 
         setVisible(true);
     }
@@ -59,7 +60,7 @@ public class Labirinto extends JPanel {
      * @param riga elemento corrente
      * @param colonna elemento corrente
      */
-    private void backtracking(int riga, int colonna) {
+    private void backtracking(int riga, int colonna, Direzioni ultimaDirezione) {
         System.out.println(mappaCelleVisitate());
         System.out.println(mappaVicini());
 
@@ -74,11 +75,14 @@ public class Labirinto extends JPanel {
        mappaCelleVisitate.put(cellaCorrente, true);
        aggiornaVicini(riga, colonna);
 
+       // Rimuovi muro fra cella corrente e cella da cui è stata mandata la chiamata
+        // to do
+
        while(mappaVicini.get(cellaCorrente) != 0) {
            // Visita una cella adiacente random
-           int prossimaRiga = riga + R.nextInt(-1, 2);
-           int prossimaColonna = prossimaRiga == riga ? colonna + R.nextInt(-1, 2) : colonna;
-           backtracking(prossimaRiga, prossimaColonna);
+           Direzioni direzioneRandom = Direzioni.generaDirezioneRandom();
+           int[] incremento = direzioneRandom.getIncrementoRigaColonna();
+           backtracking(riga + incremento[0], colonna + incremento[1], direzioneRandom);
        }
     }
 
