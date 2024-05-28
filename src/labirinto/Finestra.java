@@ -20,7 +20,7 @@ public class Finestra extends JFrame {
         mainPanel.add(new Labirinto(10, 10));
         add(mainPanel);
 
-        setVisible(true);
+//        setVisible(true);
     }
 
 }

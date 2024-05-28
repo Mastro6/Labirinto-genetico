@@ -11,8 +11,6 @@ public class Cella extends JPanel {
 
     ArrayList<Direzioni> lati = new ArrayList<>();
 
-    private boolean visitata;
-
     public Cella() {
         // Di default, una cella ha tutti e quattro i "muri"
         lati.addAll(Arrays.asList(Direzioni.values()));
@@ -46,10 +44,6 @@ public class Cella extends JPanel {
         lati.remove(lato);
         updateBorders();
         return true;
-    }
-
-    public void setVisitata(boolean b) {
-        visitata = b;
     }
 
 }

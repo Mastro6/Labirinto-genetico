@@ -4,13 +4,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class Labirinto extends JPanel {
 
     private static final int GAP_FROM_FRAME_EDGES = 100;
+    private static final Random R = new Random();
     private static final Dimension preferredDimension = new Dimension(Finestra.WIDTH - GAP_FROM_FRAME_EDGES, Finestra.HEIGHT - GAP_FROM_FRAME_EDGES);
     private Cella[][] celle;
     private HashMap<Cella, Integer> mappaVicini = new HashMap<>();
+    private HashMap<Cella, Boolean> mappaCelleVisitate = new HashMap<>();
 
     /**
      * Genera un labirinto random
@@ -36,27 +39,18 @@ public class Labirinto extends JPanel {
                     numeroVicini -= 1;
 
                 mappaVicini.put(cellaCorrente, numeroVicini);
+                mappaCelleVisitate.put(cellaCorrente, false);
 
                 celle[i][j] = cellaCorrente;
                 add(cellaCorrente);
             }
         }
 
-        // TEST
-        // visita la cella 1,1 per verificare l'aggiornamento effettivo
-        System.out.println(mappaVicini());
-        System.out.println("-------------------");
-        int riga = 1;
-        int colonna = 1;
-        celle[riga][colonna].setVisitata(true);
-        aggiornaVicini(riga, colonna);
-        System.out.println(mappaVicini());
+        // TEST generazione backtracking
+        backtracking(3,3);
+        System.out.println(mappaCelleVisitate());
 
         setVisible(true);
-    }
-
-    public void generaLabirintoRandom() {
-
     }
 
     /**
@@ -66,41 +60,47 @@ public class Labirinto extends JPanel {
      * @param colonna elemento corrente
      */
     private void backtracking(int riga, int colonna) {
+        System.out.println(mappaCelleVisitate());
+        System.out.println(mappaVicini());
+
         if(riga < 0 || riga >= celle.length || colonna < 0 || colonna >= celle[0].length)
             return;
 
        Cella cellaCorrente = celle[riga][colonna];
-       cellaCorrente.setVisitata(true);
+       if (mappaCelleVisitate.get(cellaCorrente))   // Cella già visitata
+           return;
 
-        if(mappaVicini.get(cellaCorrente) == 0)
-            return;
+       // Imposta come visitata la cella corrente e aggiorna vicini
+       mappaCelleVisitate.put(cellaCorrente, true);
+       aggiornaVicini(riga, colonna);
 
-        // Visita una casella vicina a caso
-//        backtracking(...);
-//        aggiornaVicini(cellaCorrente);
-        // Richiama metodo su se stessa. Se ci fossero altri vicini, visita anche loro
-
+       while(mappaVicini.get(cellaCorrente) != 0) {
+           // Visita una cella adiacente random
+           int prossimaRiga = riga + R.nextInt(-1, 2);
+           int prossimaColonna = prossimaRiga == riga ? colonna + R.nextInt(-1, 2) : colonna;
+           backtracking(prossimaRiga, prossimaColonna);
+       }
     }
 
     /**
-     * Aggiorna i valori della mappa in modo che le celle adiacenti alla cella in input abbiano un vicino in meno
-     * Nessun controllo su parametri. Il metodo va chiamato unicamente quando si è modificata una cella del labirinto
-     * @param riga della cella appena visitata
-     * @param colonna della cella appena visitata
+     * Aggiorna i valori della mappa in modo che le celle adiacenti alla cella visitata abbiano un vicino in meno
+     * Nessun controllo su parametri: il metodo va chiamato unicamente quando si è modificata una cella del labirinto
+     * @param riga della cella visitata
+     * @param colonna della cella visitata
      */
     private void aggiornaVicini(int riga, int colonna) {
         // vicino superiore
         if (riga + 1 < celle.length)
-            mappaVicini.put(celle[riga + 1][colonna], mappaVicini.get(celle[riga + 1][colonna]) - 1);
+            mappaVicini.put(celle[riga + 1][colonna], Math.max(mappaVicini.get(celle[riga + 1][colonna]) - 1, 0));
         // vicino inferiore
         if (riga - 1 >= 0)
-            mappaVicini.put(celle[riga - 1][colonna], mappaVicini.get(celle[riga - 1][colonna]) - 1);
+            mappaVicini.put(celle[riga - 1][colonna], Math.max(mappaVicini.get(celle[riga - 1][colonna]) - 1, 0));
         // vicino di destra
         if (colonna + 1 < celle[0].length)
-            mappaVicini.put(celle[riga][colonna + 1], mappaVicini.get(celle[riga][colonna + 1]) - 1);
+            mappaVicini.put(celle[riga][colonna + 1], Math.max(mappaVicini.get(celle[riga][colonna + 1]) - 1, 0));
         // vicino di sinistra
         if (colonna - 1 >= 0)
-            mappaVicini.put(celle[riga][colonna - 1], mappaVicini.get(celle[riga][colonna - 1]) - 1);
+            mappaVicini.put(celle[riga][colonna - 1], Math.max(mappaVicini.get(celle[riga][colonna - 1]) - 1, 0));
     }
 
     /**
@@ -116,6 +116,26 @@ public class Labirinto extends JPanel {
                 if (j < celle[0].length - 1)
                     sb.append(',')
                             .append(' ');
+            }
+            sb.append(']')
+                    .append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Fornisce versione String della HashMap mappaCelleVisitate
+     * @return visualizzazione a matrice di 'x' per celle visitate, ' ' per celle non visitate
+     */
+    public String mappaCelleVisitate() {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < celle.length; i++) {
+            sb.append('[');
+            for (int j = 0; j < celle[0].length; j++) {
+                sb.append(mappaCelleVisitate.get(celle[i][j]) ? 'x' : ' ');
+
+                if (j < celle[0].length - 1)
+                    sb.append(' ');
             }
             sb.append(']')
                     .append('\n');
