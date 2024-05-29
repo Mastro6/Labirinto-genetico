@@ -30,7 +30,7 @@ public class Cella extends JPanel {
         revalidate();
     }
 
-    public boolean addBorder(Direzioni lato) {
+    public boolean aggiungiMuro(Direzioni lato) {
         if (lati.contains(lato))
             return false;
         lati.add(lato);
@@ -38,7 +38,7 @@ public class Cella extends JPanel {
         return true;
     }
 
-    public boolean removeBorder(Direzioni lato) {
+    public boolean rimuoviMuro(Direzioni lato) {
         if (!lati.contains(lato))
             return false;
         lati.remove(lato);

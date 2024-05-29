@@ -2,14 +2,11 @@ package labirinto;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 public class Labirinto extends JPanel {
 
     private static final int GAP_FROM_FRAME_EDGES = 100;
-    private static final Random R = new Random();
     private static final Dimension preferredDimension = new Dimension(Finestra.WIDTH - GAP_FROM_FRAME_EDGES, Finestra.HEIGHT - GAP_FROM_FRAME_EDGES);
     private Cella[][] celle;
     private HashMap<Cella, Integer> mappaVicini = new HashMap<>();
@@ -67,23 +64,31 @@ public class Labirinto extends JPanel {
         if(riga < 0 || riga >= celle.length || colonna < 0 || colonna >= celle[0].length)
             return;
 
-       Cella cellaCorrente = celle[riga][colonna];
-       if (mappaCelleVisitate.get(cellaCorrente))   // Cella già visitata
-           return;
+        Cella cellaCorrente = celle[riga][colonna];
+        if (mappaCelleVisitate.get(cellaCorrente))   // Cella già visitata
+            return;
 
-       // Imposta come visitata la cella corrente e aggiorna vicini
-       mappaCelleVisitate.put(cellaCorrente, true);
-       aggiornaVicini(riga, colonna);
+        // Imposta come visitata la cella corrente e aggiorna vicini
+        mappaCelleVisitate.put(cellaCorrente, true);
+        aggiornaVicini(riga, colonna);
 
-       // Rimuovi muro fra cella corrente e cella da cui è stata mandata la chiamata
-        // to do
+        // Rimuovi muro fra cella corrente e cella da cui è stata mandata la chiamata
+        if (ultimaDirezione != null) {
+            Direzioni inversoUltimaDirezione = ultimaDirezione.inverso();
+            int[] incremento = inversoUltimaDirezione.getIncrementoRigaColonna();
+            // Muro casella precedente
+            celle[riga + incremento[0]][colonna + incremento[1]].rimuoviMuro(ultimaDirezione);
+            // Muro casella corrente
+            celle[riga][colonna].rimuoviMuro(inversoUltimaDirezione);
+        }
 
-       while(mappaVicini.get(cellaCorrente) != 0) {
+        Direzioni direzioneRandom = null;
+        while(mappaVicini.get(cellaCorrente) != 0) {
+            direzioneRandom = Direzioni.generaDirezioneRandom();
            // Visita una cella adiacente random
-           Direzioni direzioneRandom = Direzioni.generaDirezioneRandom();
            int[] incremento = direzioneRandom.getIncrementoRigaColonna();
            backtracking(riga + incremento[0], colonna + incremento[1], direzioneRandom);
-       }
+        }
     }
 
     /**

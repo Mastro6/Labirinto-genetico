@@ -18,16 +18,34 @@ public enum Direzioni {
     public int[] getIncrementoRigaColonna() {
         switch (this) {
             case SU -> {
-                return new int[] {1,0};
+                return new int[] {-1,0};
             }
             case GIU -> {
-                return new int[] {-1,0};
+                return new int[] {1,0};
             }
             case DESTRA -> {
                 return new int[] {0,1};
             }
             case SINISTRA -> {
                 return new int[] {0,-1};
+            }
+        }
+        return null;
+    }
+
+    public Direzioni inverso() {
+        switch (this) {
+            case SU -> {
+                return GIU;
+            }
+            case GIU -> {
+                return SU;
+            }
+            case DESTRA -> {
+                return SINISTRA;
+            }
+            case SINISTRA -> {
+                return DESTRA;
             }
         }
         return null;
