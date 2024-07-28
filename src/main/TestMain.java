@@ -25,7 +25,7 @@ public class TestMain extends Application {
         // Setup the main container
         BorderPane root = new BorderPane();
         // Place a label in the center of the window
-        root.setCenter(new Label("Hello from JavaFX"));
+        root.setCenter(new Label("FunXiona"));
         // Set up scene and stage
         primaryStage.setScene(new Scene(root, 285, 195));
         primaryStage.setTitle("JavaFX Hello");
